@@ -1,0 +1,47 @@
+           STREAMNAME=GDELT_EVENT
+              STREAMS=7
+KAFKA_RETENTION_BYTES=1024000
+      TOPIC_IS_UNIQUE=YES
+      INPUT_DELIMITER='\\t'
+     OUTPUT_DELIMITER='\\t'
+      INPUT_EXTENSION=CSV
+
+           HDFS_DIR_OVERRIDE=
+       HDFS_CCK_DIR_OVERRIDE=
+HDFS_RETURN_CCK_DIR_OVERRIDE=
+
+
+
+#
+# Usage:
+#
+#
+# STREAMNAME - the repository table name. This will be the basename of the kafka stream and the spark streaming queries
+#
+# STREAMS - number of kafka partitions and the number of spark worker containers. Near-linear throughput scaling, until
+#           memory on the spark-driver machine fills, or kafka tmp fills available disk storage.
+#           If kafka fills temp space, consider reducing kafka retention
+# KAFKA_RETENTION_BYTES = (see kafka documentation) the retention ceiling for each partition for each topic.
+#                         The free space on /tmp (where kafka is storing incoming messages) must be larger than
+#                         (STREAMS * KAFKA_RETENTION_BYTES)
+#
+# TOPIC_IS_UNIQUE=[YES|NO] - append a timestamp to the topic name to begin using a new kafka topic and
+#                            new sparkstreaming checkpoints. Useful for testing or for aligning kafka
+#                            partitions with temporal partitions when persisting data using spark.
+#
+# INPUT_DELIMITER='\\t' - the delimiter used for the input files in single quotes. For example ',' or '\\t'
+#
+#OUTPUT_DELIMITER='\\t' - the delimiter used when writing CSV files using spark. If the input source is tab-delimited
+#                         then the output source should also be tab delimited.
+#
+# INPUT_EXTENSION=CSV   - the extension used for input files. Usually CSV or csv.
+#
+#
+# Use Override's to set a different write target directory
+#HDFS_DIR_OVERRIDE      - Override auto-generation of a HDFS target directory matching STREAMNAME
+#                         Can be used to merge incoming streams from multiple sources to a single HDFS target directory.
+#
+#HDFS_CCK_DIR_OVERRIDE  - As above, set to re-use an existing spark streaming checkpoint directory
+#
+#HDFS_RETURN_CCK_DIR_OVERRIDE= - As above, set to re-use an exising spark streaming checkpoint directory for the return messages
+#
